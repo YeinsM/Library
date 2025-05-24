@@ -28,14 +28,14 @@ API RESTful desarrollada en .NET 8 para la gestión de Autores, Libros y Présta
 1. **Clonar el repositorio:**
    ```bash
    git clone https://github.com/YeinsM/library.git
-   cd library
-```
+   cd library```
+
 
 2. **Configurar cadena de conexión en `appsettings.json`:**
    Ubicado en `src/WebAPI/appsettings.json`
 
-   ```No es necesario configurar, como es un proyecto para ustedes
-Dejare los datos del appsettings para que ustedes eviten esta configuración
+   ```bash
+   No es necesario configurar, como es un proyecto para ustedes. Dejare los datos del appsettings para que ustedes eviten esta configuración
    ```
 
 3. **Aplicar migraciones y crear la base de datos:**
