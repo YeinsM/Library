@@ -125,4 +125,4 @@ Para autenticación, puedes usar estos usuarios simulados del `UserStore.cs`:
 
 Desarrollado por Yeins Mancera para la prueba técnica de **Dextra**.
 
-```
+````
