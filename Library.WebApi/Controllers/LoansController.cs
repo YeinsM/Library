@@ -12,6 +12,13 @@ namespace Library.WebApi.Controllers
     [Route("api/[controller]")]
     public class LoansController(ILoanRepository loanRepository) : ControllerBase
     {
+        [HttpGet]
+        public async Task<IActionResult> GetAllLoans()
+        {
+            var loans = await loanRepository.GetAllAsync();
+            return Ok(ApiResponse<IEnumerable<Loan>>.Ok(loans));
+        }
+
         [HttpGet("no-retornados")]
         public async Task<IActionResult> GetNotReturnedLoans()
         {

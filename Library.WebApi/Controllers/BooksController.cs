@@ -12,6 +12,13 @@ namespace Library.WebApi.Controllers
     [Route("api/[controller]")]
     public class BooksController(IBookRepository bookRepository) : ControllerBase
     {
+        [HttpGet]
+        public async Task<IActionResult> GetAllBooks()
+        {
+            var books = await bookRepository.GetAllAsync();
+            return Ok(ApiResponse<IEnumerable<Book>>.Ok(books));
+        }
+
         [HttpGet("antes-de-2000")]
         public async Task<IActionResult> GetBooksBefore2000()
         {
