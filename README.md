@@ -1,4 +1,3 @@
-````markdown
 # 📚 Prueba Técnica DEXTRA - Library API
 
 API RESTful desarrollada en .NET 8 para la gestión de Autores, Libros y Préstamos. Incluye autenticación JWT, autorización por roles, consultas optimizadas, pruebas unitarias y documentación Swagger.
@@ -124,5 +123,3 @@ Para autenticación, puedes usar estos usuarios simulados del `UserStore.cs`:
 ## 🧑‍💻 Autor
 
 Desarrollado por Yeins Mancera para la prueba técnica de **Dextra**.
-
-````
