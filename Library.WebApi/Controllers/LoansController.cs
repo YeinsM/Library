@@ -1,5 +1,8 @@
-﻿using Library.Domain.Entities;
+﻿using Library.Domain.DTOs.Stats;
+using Library.Domain.Entities;
+using Library.Infrastructure.Repositories;
 using Library.Infrastructure.Repositories.Interfaces;
+using Library.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,22 +12,21 @@ namespace Library.WebApi.Controllers
     [Route("api/[controller]")]
     public class LoansController(ILoanRepository loanRepository) : ControllerBase
     {
-        [HttpGet("not-returned")]
+        [HttpGet("no-retornados")]
         public async Task<IActionResult> GetNotReturnedLoans()
         {
             var loans = await loanRepository.GetAllAsync();
             var result = loans.Where(l => l.DueDate == null)
                                .Select(l => new
                                {
-                                   l.Book.Author.AuthorId,
-                                   AuthorName = l.Book.Author.Name,
                                    l.BookId,
                                    BookTitle = l.Book.Title
                                });
-            return Ok();
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateReturnDate(int id, [FromBody] DateTime returnDate)
         {
             var loan = await loanRepository.GetByIdAsync(id);
@@ -35,20 +37,35 @@ namespace Library.WebApi.Controllers
             loanRepository.Update(loan);
             await loanRepository.SaveChangesAsync();
 
-            return Ok();
+            return Ok(ApiResponse<Loan>.Ok(loan, "Fecha de devolución actualizada."));
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var loan = await loanRepository.GetByIdAsync(id);
             if (loan == null)
-                return NotFound();
+                return NotFound(ApiResponse<object>.Fail("Préstamo no encontrado.", code: "NOT_FOUND"));
 
             loanRepository.Delete(loan);
             await loanRepository.SaveChangesAsync();
 
-            return Ok();
+            return Ok(ApiResponse<object>.Ok("Préstamo eliminado correctamente."));
+        }
+
+        [HttpGet("prestamos-por-genero")]
+        public async Task<IActionResult> GetLoansByGenre()
+        {
+            var result = await loanRepository.GetLoansByGenreAsync();
+            return Ok(ApiResponse<IEnumerable<LoansByGenreDto>>.Ok(result));
+        }
+
+        [HttpGet("prestamos-por-autor")]
+        public async Task<IActionResult> GetLoansByAuthor()
+        {
+            var result = await loanRepository.GetLoansByAuthorAsync();
+            return Ok(ApiResponse<IEnumerable<LoansByAuthorDto>>.Ok(result));
         }
     }
 

@@ -12,6 +12,9 @@ namespace Library.Infrastructure.Data.Configurations
             builder.HasKey(l => l.LoanId)
                 .HasName("prestamo_id");
 
+            builder.HasIndex(l => l.DueDate);
+            builder.HasIndex(l => l.BookId);
+
             builder.Property(l => l.LoanDate)
                 .HasColumnName("fecha_prestamo")
                 .IsRequired();

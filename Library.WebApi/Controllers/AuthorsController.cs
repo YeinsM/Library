@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Library.Domain.Entities;
+﻿using Library.Domain.Entities;
 using Library.Infrastructure.Data;
 using Library.Infrastructure.Repositories.Interfaces;
 using Library.WebApi.DTOs.Author;
+using Library.WebApi.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Library.WebApi.Controllers
 {
@@ -29,14 +31,14 @@ namespace Library.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetAuthor(int id)
         {
-            var author = authorRepository.GetByIdAsync(id);
+            var author = await authorRepository.GetByIdAsync(id);
 
             if (author == null)
             {
-                return NotFound();
+                return NotFound(ApiResponse<Author>.Fail("Autor no encontrado", code: "NOT_FOUND"));
             }
 
-            return Ok(author);
+            return Ok(ApiResponse<Author>.Ok(author));
         }
 
         // PUT: api/Authors/5
@@ -46,7 +48,7 @@ namespace Library.WebApi.Controllers
         {
             if (id != author.AuthorId)
             {
-                return BadRequest();
+                return BadRequest(ApiResponse<Author>.Fail("Error en los datos, verifique e intente nuevamente", code: "BAD_REQUEST"));
             }
 
             context.Entry(author).State = EntityState.Modified;
@@ -59,7 +61,7 @@ namespace Library.WebApi.Controllers
             {
                 if (!AuthorExists(id))
                 {
-                    return NotFound();
+                    return NotFound(ApiResponse<Author>.Fail("Autor no encontrado", code: "NOT_FOUND"));
                 }
                 else
                 {
@@ -79,7 +81,7 @@ namespace Library.WebApi.Controllers
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                return BadRequest();
+                return BadRequest(ApiResponse<object>.Fail("Datos inválidos.", errors, code: "BAD_REQUEST"));
             }
 
             var author = new Author {
@@ -90,7 +92,7 @@ namespace Library.WebApi.Controllers
             await authorRepository.AddAsync(author);
             await context.SaveChangesAsync();
 
-            return Ok(author);
+            return Ok(ApiResponse<Author>.Ok(author, "Autor creado correctamente."));
         }
 
         // DELETE: api/Authors/5
@@ -100,7 +102,7 @@ namespace Library.WebApi.Controllers
             var author = await context.Authors.FindAsync(id);
             if (author == null)
             {
-                return NotFound();
+                return NotFound(ApiResponse<Author>.Fail("Autor no encontrado", code: "NOT_FOUND"));
             }
 
             context.Authors.Remove(author);
